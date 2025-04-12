@@ -9,7 +9,7 @@ O objetivo é ajudar **novos programadores e desenvolvedores iniciantes** a real
 ## 📜 Sobre o script
 
 Arquivo: `ubuntu-lts-upgrade.sh`  
-Criado por: [Rarysson](https://github.com/SeuUsuarioAqui)  
+Criado por: [Rarysson](https://github.com/RaryssonPereira)  
 Objetivo: Automatizar os principais passos para atualizar o Ubuntu de uma versão LTS para outra.
 
 ---
@@ -39,7 +39,7 @@ Objetivo: Automatizar os principais passos para atualizar o Ubuntu de uma versã
 ### 1. Baixe o script
 
 ```bash
-git clone https://github.com/SeuUsuarioAqui/ubuntu-lts-upgrade.git
+git clone https://github.com/RaryssonPereira/ubuntu-lts-upgrade.git
 cd ubuntu-lts-upgrade
 ```
 
