@@ -4,41 +4,74 @@
 # ubuntu-lts-upgrade.sh
 # Script para atualizar Ubuntu 20.04 LTS para 22.04 LTS
 # Criado por: Rarysson 💻
+# Atualizado com melhorias por ChatGPT 🚀
 # -----------------------------------------
 
-echo "🧱 Iniciando atualização do Ubuntu 20.04 LTS para 22.04 LTS..."
+LOG_FILE="ubuntu-lts-upgrade.log"
 
-# Etapa 1: Atualização completa do sistema atual
-echo "🔄 Atualizando pacotes atuais..."
-sudo apt update && sudo apt upgrade -y          # Atualiza lista de pacotes e instala atualizações disponíveis
-sudo apt dist-upgrade -y                        # Faz upgrade de pacotes que mudam dependências
-sudo apt autoremove -y                          # Remove pacotes desnecessários
+# Função para registro de logs detalhados
+log() {
+    echo -e "$1"
+    echo -e "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOG_FILE"
+}
 
-# Etapa 2: Verificar se update-manager-core está instalado (necessário para upgrades de versão)
-echo "📦 Instalando update-manager-core..."
-sudo apt install update-manager-core -y
+# Validação inicial para garantir que o script seja executado como root
+if [ "$EUID" -ne 0 ]; then
+    log "❌ Este script deve ser executado como root. Utilize: sudo ./ubuntu-lts-upgrade.sh"
+    exit 1
+fi
 
-# Etapa 3: Garantir que o sistema está configurado para buscar apenas versões LTS
-echo "⚙️ Configurando /etc/update-manager/release-upgrades..."
-sudo sed -i 's/^Prompt=.*/Prompt=lts/' /etc/update-manager/release-upgrades
+log "🧱 Iniciando atualização do Ubuntu 20.04 LTS para 22.04 LTS..."
 
-# Etapa 4: Reinicialização opcional para aplicar atualizações pendentes
-read -p "🚀 Deseja reiniciar o sistema antes de continuar? (s/n): " answer
-if [[ "$answer" =~ ^[sS]$ ]]; then
-    echo "🔁 Reiniciando... Salve seus trabalhos!"
+# Verificação da versão atual do sistema operacional
+CURRENT_VERSION=$(lsb_release -rs)
+if [[ "$CURRENT_VERSION" != "20.04" ]]; then
+    log "❌ Sua versão atual é $CURRENT_VERSION. Este script só funciona com o Ubuntu 20.04 LTS."
+    exit 1
+fi
+
+# Checagem de espaço disponível em disco (mínimo recomendado: 5GB)
+AVAILABLE_DISK=$(df -h / | awk 'NR==2 {print $4}' | sed 's/G//')
+if (( $(echo "$AVAILABLE_DISK < 5" | bc -l) )); then
+    log "⚠️  Espaço em disco disponível inferior a 5GB. Libere espaço antes de continuar."
+    exit 1
+fi
+
+# Opção para realizar um backup das configurações essenciais antes da atualização
+read -p "💾 Deseja fazer um backup das configurações essenciais antes de atualizar? (s/n): " backup
+if [[ "$backup" =~ ^[sS]$ ]]; then
+    BACKUP_FILE="backup-config-$(date '+%Y%m%d').tar.gz"
+    log "📦 Realizando backup em $BACKUP_FILE..."
+    tar czf "$BACKUP_FILE" /etc
+    log "✅ Backup concluído com sucesso."
+fi
+
+# Atualização completa dos pacotes atuais do sistema para garantir compatibilidade
+log "🔄 Atualizando pacotes atuais..."
+apt update && apt upgrade -y && apt dist-upgrade -y && apt autoremove -y
+
+# Instalação do update-manager-core, ferramenta essencial para upgrade do Ubuntu
+log "📦 Verificando e instalando update-manager-core..."
+apt install update-manager-core -y
+
+# Configuração para garantir que apenas atualizações para versões LTS sejam consideradas
+log "⚙️ Configurando release-upgrades para LTS..."
+sed -i 's/^Prompt=.*/Prompt=lts/' /etc/update-manager/release-upgrades
+
+# Pergunta ao usuário sobre reinicialização opcional para aplicar todas as atualizações pendentes antes do upgrade
+read -p "🚀 Deseja reiniciar o sistema antes de continuar? (s/n): " reboot_answer
+if [[ "$reboot_answer" =~ ^[sS]$ ]]; then
+    log "🔁 Reiniciando sistema... Salve seus trabalhos!"
     sleep 3
-    sudo reboot
+    reboot
     exit 0
 fi
 
-# Etapa 5: Inicia o processo de upgrade
-echo "📈 Iniciando o upgrade para o Ubuntu 22.04 LTS..."
-sudo do-release-upgrade
+# Executa o upgrade para a versão 22.04 LTS do Ubuntu
+log "📈 Iniciando o upgrade para Ubuntu 22.04 LTS..."
+do-release-upgrade
 
-# Etapa 6: Instrução pós-upgrade
-echo ""
-echo "✅ Após a reinicialização, você pode confirmar a nova versão com o comando:"
-echo "   lsb_release -a"
-echo ""
+# Informação pós-upgrade para usuário verificar manualmente a nova versão do sistema
+log "✅ Após a reinicialização, confirme a nova versão com o comando: lsb_release -a"
 
-echo "🎉 Atualização finalizada com sucesso!"
+log "🎉 Atualização finalizada com sucesso! Detalhes estão no arquivo $LOG_FILE."
