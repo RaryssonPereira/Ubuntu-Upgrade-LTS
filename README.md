@@ -1,6 +1,6 @@
 # 🧱 Ubuntu LTS Upgrade Script
 
-Este repositório contém um script interativo para **atualizar o Ubuntu 20.04 LTS para o Ubuntu 22.04 LTS**, a versão mais recente e estável com suporte de longo prazo (LTS).
+Este repositório contém um script interativo aprimorado para **atualizar o Ubuntu 20.04 LTS para o Ubuntu 22.04 LTS**, a versão mais recente e estável com suporte de longo prazo (LTS).
 
 O objetivo é ajudar **novos programadores e desenvolvedores iniciantes** a realizarem a atualização de forma segura, prática e sem complicações.
 
@@ -10,18 +10,23 @@ O objetivo é ajudar **novos programadores e desenvolvedores iniciantes** a real
 
 Arquivo: `ubuntu-lts-upgrade.sh`  
 Criado por: [Rarysson](https://github.com/RaryssonPereira)  
-Objetivo: Automatizar os principais passos para atualizar o Ubuntu de uma versão LTS para outra.
+Melhorias por: ChatGPT 🚀  
+Objetivo: Automatizar com segurança os principais passos para atualizar o Ubuntu de uma versão LTS para outra, incluindo validações e logs detalhados.
 
 ---
 
 ## 🔧 O que o script faz?
 
-1. Atualiza todos os pacotes existentes no sistema.
-2. Garante que o `update-manager-core` esteja instalado.
-3. Configura o sistema para aceitar apenas atualizações LTS.
-4. (Opcional) Pergunta se você deseja reiniciar antes de continuar.
-5. Inicia o processo de upgrade para o Ubuntu 22.04 LTS.
-6. Fornece instruções para verificar se a atualização foi bem-sucedida.
+1. Valida se está sendo executado com privilégios administrativos.
+2. Verifica se a versão atual é o Ubuntu 20.04 LTS.
+3. Verifica se há pelo menos 5GB de espaço livre em disco.
+4. Oferece a opção de realizar um backup das configurações essenciais antes da atualização.
+5. Atualiza todos os pacotes existentes no sistema.
+6. Garante que o `update-manager-core` esteja instalado.
+7. Configura o sistema para aceitar apenas atualizações LTS.
+8. (Opcional) Pergunta se você deseja reiniciar antes de continuar.
+9. Inicia o processo de upgrade para o Ubuntu 22.04 LTS.
+10. Fornece instruções detalhadas para verificar se a atualização foi bem-sucedida.
 
 ---
 
@@ -52,7 +57,7 @@ chmod +x ubuntu-lts-upgrade.sh
 ### 3. Execute o script
 
 ```bash
-./ubuntu-lts-upgrade.sh
+sudo ./ubuntu-lts-upgrade.sh
 ```
 
 ---
@@ -60,7 +65,7 @@ chmod +x ubuntu-lts-upgrade.sh
 ### 💡 Dica: também é possível executar assim
 
 ```bash
-bash ubuntu-lts-upgrade.sh
+sudo bash ubuntu-lts-upgrade.sh
 ```
 
 Mas o script já especifica qual shell usar com a linha `#!/bin/bash` no topo.
@@ -100,4 +105,4 @@ Sinta-se livre para **usar, modificar e compartilhar** com o mundo!
 
 ## ✨ Créditos
 
-Criado com dedicação por **Rarysson**, para ajudar outros a começarem sua jornada com **Linux e Ubuntu** da melhor forma possível.
+Criado com dedicação por **Rarysson**, com melhorias feitas por **ChatGPT**, para ajudar outros a começarem sua jornada com **Linux e Ubuntu** da melhor forma possível.
